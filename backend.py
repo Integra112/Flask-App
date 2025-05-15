@@ -7,10 +7,15 @@ import os
 app = Flask(__name__)
 CORS(app)
 
+# Environment variables for email configuration
 EMAIL_ADDRESS = os.environ.get("info@integrapvtltd.com")
 EMAIL_PASSWORD = os.environ.get("@Purchased1@integra")
 SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.hostinger.com")
 SMTP_PORT = int(os.environ.get("SMTP_PORT", 465))
+
+# Check if environment variables are set
+if not EMAIL_ADDRESS or not EMAIL_PASSWORD:
+    raise ValueError("EMAIL_ADDRESS and EMAIL_PASSWORD must be set in environment variables")
 
 @app.route("/send-email", methods=["POST"])
 def send_email():
@@ -44,4 +49,6 @@ Message: {message}
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # For local development only
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
